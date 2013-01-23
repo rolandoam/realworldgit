@@ -31,37 +31,39 @@ But please, feel free to change it to suit your needs.
 
 ### Setup
 
-First, get a [github](https://github.com) account, they're cheap (free) if
-you're just using them for open source projects. For this tutorial, it's ok to
-just use a free account.
+First, get a [github][github] account, they're cheap (free) if you're just using
+them for open source projects. For this tutorial, it's ok to just use a free
+account.
 
 Once you have your account ready, you need to decide a path: this tutorial will
 offer always two explanations: using the github client (for mac and windows,
 qwhen there's a difference) and *only* using the CLI git client, which is
 included by default for mac os x and shipped with the
-[windows client](http://windows.github.com/) for github. Bottom line: if you're
-under windows, and unless you really know what you're doing, for now it would be
-best if you just install the
-[github windows client](http://windows.github.com/). It will install everything
+[windows client][gh-windows] for github. Bottom line: if you're under windows,
+and unless you really know what you're doing, for now it would be best if you
+just install the [github windows client][gh-windows]. It will install everything
 required to complete this tutorial. If you're on mac os x or linux, you can use
 just the command line if you feel comfortable, or a GUI client, like
-[GitX (L)](http://gitx.laullon.com/).
+[GitX (L)][gitx-l].
 
 There are some things that are either too cumbersome to do in the current GUI
 clients, so we will use the CLI client for some parts.
 
-
 ### Forking
 
 Ok, now that you're ready, it's time to fork your first project, this particular
-project. So go ahead and point your browser to the repo url
-(https://github.com/funkaster/realworldgit), sign in with your account and fork
-the project to your account, using the `Fork` button on the top right. Github
-will ask to to which account you want to fork it (if you belong to an
-organization), just pick your username and it should fork it to your account.
+project. So go ahead and point your browser to the [repo url][rwg], sign in with
+your account and fork the project to your account, using the `Fork` button on
+the top right. If you belong to an organization, then Github will ask you to
+which account you want to fork it, for our case, just pick your username and
+you're done.
+
+![Repo][rwg-img]
 
 Now you should have a new fork of the project, under your name. The url is the
 same but instead of `funkaster` it should say your username.
+
+![Fork][fork-img]
 
 ### Understanding Forks
 
@@ -100,6 +102,14 @@ some place safe (like ~/projects, or whatever...) and clone the repo:
 git clone git@github.com:yourusername/realworldgit.git
 ```
 
+For the github client, just open the client, refresh the list of projects under
+the github section and click the clone button (it appears only when you hover
+your mouse over the project name). After that, github should place a local clone
+in your computer in a special place under your home directory. For windows, the
+default is in the Documents directory.
+
+![GH-clone][gh-clone-img]
+
 Whichever way you did it, you should end with a local clone, which you can start
 hacking into :) - Good job!
 
@@ -107,17 +117,28 @@ hacking into :) - Good job!
 
 Before start hacking, we need to tell our local clone to keep an eye on the main
 project (the original project from which you forked). To do this, you need to go
-to the shell/terminal and cd into the project:
+to the shell/terminal and cd into the project. One good thing about the shell
+installed by github, is that it will open by default on the right directory. So
+you should just do something like this:
+
+NOTE: through here on, the `$` character represents the prompt in your shell.
 
 ```sh
-cd ~/projects/realworldgit # or wherever you placed your local clone
-git remote add upstream git://github.com/funkaster/realworldgit.git
+$ cd realworldgit # or wherever you placed your local clone
+$ git remote add upstream git://github.com/funkaster/realworldgit.git
+$ git remote -v
+origin  git@github.com:yourusername/realworldgit.git (fetch)
+origin  git@github.com:yourusername/realworldgit.git (push)
+upstream      git://github.com/funkaster/realworldgit.git (fetch)
+upstream      git://github.com/funkaster/realworldgit.git (push)
 ```
 
-The URL I used there is the url given in the
-[main page](https://github.com/funkaster/realworldgit) of the project, when you
-click in the `Git Read-Only` tab. It's always a good idea to have upstream as
-read-only unless you really know what you're doing :)
+The last command shows that you have the two remotes, the first is `origin`, which
+represents your fork and the upstream, which represents the original clone.
+
+The URL I used there is the url given in the [main page][rwg] of the project,
+when you click in the `Git Read-Only` tab. It's always a good idea to have
+upstream as read-only unless you really know what you're doing :)
 
 Ok, now you have the upstream ready. We will see soon how to update your local
 clone and how to update your remote clone (the fork).
@@ -136,7 +157,14 @@ You can skip your email if you want, or add a comment. It's not really relevant
 :) After you add your name there, we can start the simplest git flow: the
 commit.
 
-NOTE: through here on, the `$` character represents the prompt in your shell.
+### CLI version (recommended)
+
+*NOTE*: if you intend to perform these steps in the github client, don't execute
+the commands in this section, because you will leave your repo in a _clean_
+state and you won't be able to commit from the github client unless you make
+another change.
+
+Go back the your terminal/shell and make sure you're on the root of your repo.
 
 ```sh
 $ git status
@@ -182,9 +210,44 @@ flexible. I follow this rule:
 (Reference:
 http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
 
-For the commit message, if needed I try to use
-[Markdown](http://daringfireball.net/projects/markdown/) syntax: they look good
-on github.
+For the commit message, if needed I try to use [Markdown][markdown] syntax: they
+look good on github.
+
+### Github client version
+
+Although we're going to do the same as before, for simple commits the workflow
+is highly simplified with the github client. Even if you intend to use only
+the github client, I recommend you read the CLI version to understand what we're
+doing.
+
+NOTE: if you already did the CLI version, you might not be able to perform the
+following steps, because you already commited your changes and now your repo
+should be _clean_.
+
+If you go to the github client, and click in your local clone (the blue arrow
+next to the repo name), github will show you that you have 1 file "to be
+commited".  If you followed the instructions above, this means that you have 1
+file that has not been staged.
+
+If the changes are small, github client will show you the _diff_ together with a
+commit pane to the right. Go ahead and write a commit message *following the
+best practices* described in the previous sections and click the commit button.
+
+![GH-commit][gh-commit-img]
+
+Easy, right? Sure it is :)
+
+While tempting, if you plan to be really serious about using git, I highly
+recommend using the CLI as much as you can. There are several things that are
+not yet able to be done in the GUI. There are, however, other clients that are
+more powerful, but those are outside the scope of this tutorial. Having said
+that, I encourage you to go ahead and explore them all if you can/want, but my
+personal opinion is that using the cli will give you enough control and
+flexibility.
+
+In my day-to-day work, I use a mix of GitX(L) and the cli. The only reason I use
+GitX(L) is to be able to make commits by hunks easier (more on that later), but
+for pushing, pulling, merging, rebasing, etc. I relly solely on the cli.
 
 ## Pushing your changes and preparing a patch
 
@@ -192,9 +255,14 @@ Ok, now you have your first commit ready, but if you go to your fork page, you
 won't see the log for your first commit, why? As I mentioned before, `git` is a
 distributed VCS, and as such, changes occuring in your local clone are
 independent of what is in the fork (the remote clone). But fear not, you can
-synchronize them both in a safe manner: git provides the command `push` and
+synchronize them both in a safe manner: git provides the commands `push` and
 `pull` to easily send your changes to a remote clone and to _fetch_ the changes
 from the remote repo and _merge_ them into your changes. So let's do that.
+
+### CLI version
+
+Go back to your shell/terminal. Again, don't execute this code if you intend to
+follow the github client version:
 
 ```sh
 $ git push origin master
@@ -202,11 +270,19 @@ $ git push origin master
 
 What this command is doing is: push the changes that are in my repo, in the
 current branch to the branch `master` of the `origin` repo. By default, when you
-clone a repo git creates a default remote branch, the `origin`.
+clone a repo git creates a default remote branch, the `origin`. We saw that when
+we executed the `git remote -v` command when adding the upstream remote.
 
 Hopefully, everything went well. You can now reload your project page in github
 and you should see that the last commit there is the one that you have just
 created. Well done!
+
+### Github client version
+
+In your github client, in the realworld repo, just click the `sync` icon. This does
+a few more things that the cli version. But we will skip over them for now.
+
+### Preparing the patch
 
 Now, you want to add your name to the official repo, so other learners can see
 that you know how to commit and push changes to your remote clone. There are two
@@ -239,23 +315,53 @@ $ git format-patch upstream/master
 That will extract all the commits that are in our current branch (master) but
 not in the master branch in the upstream repo. In our case, we know it's only
 one commit, so we will end with one new file named something like
-`0001-something.patch`. We can now safely send this file to the maintainer of
-the upstream repo so he can merge it (not without testing it first!).
+`0001-what-you-wrote-on-your-commit.patch`. We can now safely send this file to
+the maintainer of the upstream repo so he can merge it (not without testing it
+first!).
 
 But this is a very simple case, most of the time you will send a patch with more
 than one commit. In that case you can just concatenate the patches in one file
 or do something more interesting, like _squashing_ all your commits in a single
 commit. We will also see that technique later.
 
-The github way is really simple and is one of the facts that has made github so
-popular: the pull request. Just go to your fork, and click the `Pull Request`
-button. That will take you to the Pull Request (PR) page and you will be able to
-select which branch from your fork will be merged in which branch of the
-upstream repo. In this case is master from your fork into master of the upstream
-repo.
+*NOTE*: to concatenate the patches from the shell/terminal, you can use the
+`cat` utility, like so:
 
-A very common pattern is to create a new branch to work on a particular
-feature/bug fix and send a PR from that branch. We will see that also.
+```sh
+cat *.patch > single.patch
+```
+
+That will take all the files with a `.patch` extension and join them in the
+`single.patch` file. That is one way to do it, but make sure first that there
+are no unwanted files with a `.patch` extension before running this, otherwise
+your concatenated patch might be corrupted.
+
+The github way is really simple and is one of the facts that has made github so
+popular: the pull request. Just open your browser and go to your fork, and click
+the `Pull Request` button. That will take you to the Pull Request (PR) page and
+you will be able to select which branch from your fork will be merged in which
+branch of the upstream repo. In this case is master from your fork into master
+of the upstream repo.
+
+![Pull Request][pr-img]
+
+In that interface, you can write a title for your pull request. Please try to be
+as descriptive as possible, without writing an essay on the title :) Usually you
+want to follow the same principles than in the commit message.  However, the
+body of the PR can be very extensive if needed. The PR is, most of the time,
+translated in a discussion between the maintener(s) and the contributor.
+Allowing for code-review and checking the code quality before merging the
+changes.
+
+In that same interface you can also see what files are you changing and how is
+actually changing. You might want to review that before clicking the send button
+to see that you're not issuing a PR for something that you don't want to merge.
+
+If everything looks good, then go ahead and click the `Send Pull Request`
+button.  That should take a few moments and github should redirect you to the
+original repo page, in the `Pull Request` section.
+
+Congratulations! you just made your first Pull Request!
 
 After issueing the PR, the maintainer needs to review your code, he can comment
 it and if he decides to do so (and if it doesn't introduces conflicts) he can
@@ -263,6 +369,48 @@ merge the PR from the github interface. This is very powerful and has allowed
 many Open Source projects to collaborate with different contributors from all
 around the world.
 
-NOTE: if you sent a pull request, I'll do my best to try to merge them as they
-arrive, but don't hold your breath, it might take one day, it might take more
-than that, depending on my load.
+NOTE: if you actually sent a pull request, I'll do my best to try to merge them
+as they arrive, but don't hold your breath, it might take one day, it might take
+more than that, depending on my load.
+
+![PR Merged][pr-merged-img]
+
+## Keeping your fork updated
+
+Ok, it's time to update your fork. I'm going to assume that the maintainer has
+merged your pull request and there are some other changes from the original repo
+that you might want to _fetch_.
+
+Unfortunately for this (AFAIK) the github client won't work, so we need to go
+back to our shell/terminal.
+
+Here, we have two options. We can use the `pull` command, which would make
+something very similary to a `fetch` and then a `merge`, or we can execute both
+commands ourselves. I will opt for the latter, just to be verbose. Please note,
+that just doing `fetch` will not make any changes in your repo, it will only
+take whatever is new in `upstream` and store it in the "git database". The
+`merge` command is the one that's actually modifying your repo and taking the
+changes in `upstream/master`, that is, the branch `master` in the remote
+`upstream` and applying the changes on top of the _HEAD_ of your latest change.
+
+*ED-NOTE* It would be interesting at this point to add references to some internal
+parts of git. Reader: you might want to check the [git book][git-book].
+
+```sh
+$ git fetch upstream
+$ git merge upstream/master
+```
+
+
+[github]: https://github.com
+[gh-windows]: http://windows.github.com
+[gitx-l]: http://gitx.laullon.com
+[rwg]: https://github.com/funkaster/realworldgit
+[markdown]: http://daringfireball.net/projects/markdown
+[git-book]: http://git-scm.com/book/en/Getting-Started-Git-Basics
+[rwg-img]: https://raw.github.com/funkaster/realworldgit/master/images/realworldgit.png
+[fork-img]: https://raw.github.com/funkaster/realworldgit/master/images/fork.png
+[gh-clone-img]: https://raw.github.com/funkaster/realworldgit/master/images/clone.png
+[gh-commit-img]: https://raw.github.com/funkaster/realworldgit/master/images/commit.png
+[pr-img]: https://raw.github.com/funkaster/realworldgit/master/images/pullrequest.png
+[pr-merged-img]: https://raw.github.com/funkaster/realworldgit/master/images/pr-merged.png
