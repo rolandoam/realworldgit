@@ -9,10 +9,10 @@ This is a WIP! - NOT YET COMPLETE
 
 ## Disclaimer
 
-There is no *the right* workflow. I would argue there is no right workflow in
-git, some of them are better suited for some teams, some are better for
-others. This is one of the workflows I like and it seems to me that is the one
-that provides great benefits for most of the cases.
+As I see it, there is no *right* workflow. Some of them are better suited for
+some teams, some are better for others. This is one of the workflows I like and
+it seems to me that is the one that provides great benefits for most of the
+cases.
 
 But please, feel free to change it to suit your needs.
 
