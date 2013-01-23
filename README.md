@@ -266,5 +266,3 @@ around the world.
 NOTE: if you sent a pull request, I'll do my best to try to merge them as they
 arrive, but don't hold your breath, it might take one day, it might take more
 than that, depending on my load.
-
-
