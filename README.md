@@ -3,7 +3,11 @@
 The idea of this repo is to teach you a few basic concepts when using git, with
 a real github repository and the whole workflow.
 
-## Warning
+## NOTE
+
+This is a WIP! - NOT YET COMPLETE
+
+## Disclaimer
 
 There is no *the right* workflow. I would argue there is no right workflow in
 git, some of them are better suited for some teams, some are better for
