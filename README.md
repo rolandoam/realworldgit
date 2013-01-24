@@ -393,24 +393,317 @@ take whatever is new in `upstream` and store it in the "git database". The
 changes in `upstream/master`, that is, the branch `master` in the remote
 `upstream` and applying the changes on top of the _HEAD_ of your latest change.
 
-*ED-NOTE* It would be interesting at this point to add references to some internal
-parts of git. Reader: you might want to check the [git book][git-book].
+*ED-NOTE* It would be interesting at this point to add references to some
+internal parts of git. Reader: you might want to check the [git book][git-book-basics].
 
 ```sh
 $ git fetch upstream
 $ git merge upstream/master
 ```
 
+## Branches
+
+Being able to create and switch branches with ease is one of the biggest
+advantages in git. Branches are something you should use all the time to keep
+your work clean.
+
+Let me explain a little bit what are branches, but before that I would like to
+explain just briefly how git stores the data.
+
+As opposed to other VCS, git stores its data as _snapshots_ of the current state
+of your project. It's like git it's taking a picture of the state at the moment
+of your commit and storing that in a mini-filesystem
+([Git Book][git-book-basics]). Those snapshots (the commits) are identified by a
+_hash_, a 40 characters string that uniquely identifies a commit in the repo.  A
+branch, in the git parlance can be thought of different points of view for the
+repo. However, in the real sense, they are actually _pointers_ to a specific
+commit, that means they are actually a window to a particular point in time for
+your repo. But why are they called branches when they act more like pointers?
+Because they can actually _branch_ (split) the changesets of your repo at some
+point. Let me explain this with a diagram.
+
+*NOTE* we need a better diagram.
+
+Let's assume you have your repo at some state, and you're only using one branch,
+the default `master` branch, then your repo looks like this.
+
+```
+[ master ]
+    ↓
+[ 343ffd ]
+```
+
+Here, `343ffd` is the imaginary last commit in your repo. Now let's assume you
+create a new branch, called `awesome`, which will hold a very awesome feature in
+your project.
+
+```
+[ master ]
+    ↓
+[ 343ffd ]
+    ↑
+[ awesome ]
+```
+
+Now the awesome branch and the master branch point to the same commit. How does
+git know which branch are you currently watching? Because there's a special
+branch used by git that points to the one being used, and it's called the
+`HEAD`. Usually when you create a branch in git, it will move the `HEAD` pointer
+to that branch, so in our scenario, it would look somethinglike this.
+
+```
+[ master ]
+    ↓
+[ 343ffd ]
+    ↑
+[ awesome ]
+    ↑
+[ HEAD ]
+```
+
+If you change branches, using `git checkout <branch_name>` will switch the
+`HEAD` pointer, and will also reflect any changes in the _working directory_.
+
+Now, continuing with the assumptions, let's assume you are in the awesome branch
+and you make a new commit, adding this feature. Your repo would look like this.
+
+```
+[ master ]
+    ↓
+[ 343ffd ] ← [ abd24a ]
+                 ↑
+             [ awesome ]
+                  ↑
+              [ HEAD ]
+```
+
+Both, the `awesome` pointer and the `HEAD` one are now shifted and pointing to
+the last commit.  The `master` pointer, however is still on the old state.
+
+To continue our story, you now got a patch from a contributor and need to apply
+it, but you don't want to do that in the `awesome` branch, because it has
+nothing to do with that feature and one thing you do know is that you want to
+keep things simple. So in order to apply the patch, you need to switch to the
+master branch and apply it there.
+
+```sh
+$ git checkout master
+$ ...
+```
+
+So, what does your repo looks like now?
+
+```
+              [ master ]
+                  ↓
+            ↙ [ 823bfd ]
+[ 343ffd ]  
+            ↖ [ abd24a ]
+                  ↑
+             [ awesome ]
+                  ↑
+              [ HEAD ]
+```
+
+This is the split I talked about. At this point, you have `master` and `awesome`
+that point to different states, but share a common ancestor, `343ffd`. You can
+extrapolate this to more branches and spinning off branches from other branches.
+
+What are branches used for? You can actually used them for whatever you want. My
+workflow usually is: work on `master` and if you need to fix a bug, create a
+branch, work there and then merge the branch back to master. Same with small
+features.
+
+If more than one developer is working on the same feature, they may want to work
+on the same branch. You can do that by _publishing_ your branch on a remote repo
+and then letting the other developers about that branch. We will cover that
+later in the tutorial.
+
+*ED-NOTE* need to remember to actually add that example.
+
+Enough talk, this is *real world git*, so let's get our hands on it.
+
+First, we're going to create a new branch.
+
+```sh
+$ git checkout -b awesome master
+Switched to a new branch 'master'
+```
+
+The command to create a new branch, is the same command used to switch branches:
+[checkout][git-checkout].  It is also used for other things, but for now, we can
+live with that definition. The `-b` option tells git to create a new branch, and
+the optional `master` argument, tells git to use that pointer as the
+reference. If you omit the last argument, it will use whatever branch HEAD is
+pointing to. As a bonus, git also changes HEAD to point to the newly created
+branch.
+
+```sh
+$ git branch
+* awesome
+  master
+```
+
+The `branch` command lists the current local branches, and it shows you which
+one HEAD is pointing to, by placing an asterisk ('*') before the name. In this
+case, HEAD is pointing to `awesome`, as we expected to.
+
+Ok, now let's add a new "feature". Inside the `branch_test` directory, create a
+new file, with the following convention.
+
+* The file should be named as your github username and have a .txt extension
+* Inside the file, you can put whatever you want as long as it is less than 256
+  bytes. Please try to avoid profanity :)
+
+Now that you have the file, we can _stage_ it and _commit_ the changes to the
+repo, just as we did before.
+
+```sh
+$ git add branch_test/yourusername.txt
+$ git commit
+(edit the commit message, save and exit the editor)
+ 1 file changed, 1 insertion (+)
+ create mode 100644 branch_test/yourusername.txt
+```
+
+Great. Now we can run some more tests if necessary or just check that everything
+is ok. If applies, you could even build a binary and send it to QA. If you find
+out that everything is ok, then you are now ready to merge your changes into the
+master branch.
+
+```sh
+$ git checkout master
+$ git branch
+  awesome
+* master
+```
+
+As you can see, the asterisk marks the current branch (the branch to which HEAD
+is pointing to) and we can safely bring over the changes from awesome to master.
+But before doing so, you might want to make sure you have a fairly recent
+version of master, in order to minimize the chances of a conflict.
+
+```sh
+$ git fetch upstream
+$ git merge upstream/master
+```
+
+Now, can we merge? Not yet. At this point, I would like to open a small
+discussion around a very powerfull feature of git, the
+[rebase][git-rebase]. Rebase is a very, very powerfull command in git, but also
+very complex (you know what they say, "with great power, comes great
+responsibility"). Basically what rebase allows you to do is to modify (rewrite)
+history from your repo. You usually want to do this because:
+
+1. You screw up, and need to fix some things.
+2. Because you want to keep a clean history.
+
+Number 2 is the reason I want to introduce here, for number 1 there are tons and
+tons of discussions on the internet about that. According to what
+[Linus says][linus-rebase], what we want is *clean* & *history*. So that means
+for you, a very important rule:
+
+*ONLY USE REBASE ON CODE THAT HAS NOT SEEN THE LIGHT*
+
+Why? because if you publish your code (push it to your fork, for instance) and
+then run rebase, you will alter your history tree, and what will happen is that
+when you push again, the changes you will need to push will modify the version
+that was published, potentially producing lots of headaches. It is ok to run
+rebase on your local fork, as long as you are running it on un-published code,
+or unless you really know what you're doing.
+
+But let's explain what does rebase do. To do that, let's go back to our diagrams
+for your repo.
+
+```
+                           [ master ]
+                               ↓
+            ↙ [ 823bfd ] ← [ aba665 ]
+[ 343ffd ]  
+            ↖ [ abd24a ]
+                  ↑
+             [ awesome ]
+                  ↑
+              [ HEAD ]
+```
+
+Let's assume now, that with the state in the diagram, you want to bring your
+changes from the awesome branch to master. So you move yourself to master and do
+as told.
+
+```sh
+$ git checkout master
+$ git rebase awesome
+```
+
+What rebase does, is to _rewind_ your changes all the way until a common
+ancestor in the tree, apply whatever changes you have in awesome and then it
+applies the rest of the changes.  What happens is that your tree will look like
+this.
+
+```
+                                         [ HEAD ]
+                                            ↓
+                                        [ master ]
+                                            ↓
+[ 343ffd ] ← [ abd24a ] ←  [ 00bf32 ] ← [ 882ac3 ]
+                 ↑
+            [ awesome ]
+```
+
+Truth be told, I've simplified *a lot* how things work, but you get the idea :),
+which is that the tree got modified: `823bfd` (now `00bf32`) was previously
+pointing to `343ffd` as a parent, now is pointing to the last commit in awesome,
+which is `abd24a`. Since we rewrote history, commits also change their hash. You
+can always read the whole (unrated & unedited) story in the
+[official documentation][git-rebase].
+
+Now, let's try to apply that to our repo.
+
+```sh
+$ git checkout awesome
+$ git log --oneline -2 # shows only the last two commits
+0dff283 adding my branch-test file
+c0ac58b adds branch_test directory
+$ git checkout master
+$ git log --oneline -2
+c0ac58b adds branch_test directory
+1c96575 minor edit in text
+$ git rebase awesome
+...
+$ git log --oneline -2
+0dff283 adding my branch-test file
+c0ac58b adds branch_test directory
+```
+
+So what happens here, is that it since our case was a bit simpler, we didn't
+actually have to rewind, because we were already sitting in the point where the
+two branches had split, but we can see however, that master now shares the same
+history than the awesome branch. At this point, we can run some more tests,
+build another binary for QA and if all goes well, delete the awesome branch.
+
+```sh
+$ git branch -d awesome
+```
+
+The command `branch -d` will remove a branch, only if it was merged. This can be
+considered a "safe" delete, since no change will be lost.
+
+Now you might want to send another pull request to publish your changes, or
+another patch.
 
 [github]: https://github.com
 [gh-windows]: http://windows.github.com
 [gitx-l]: http://gitx.laullon.com
 [rwg]: https://github.com/funkaster/realworldgit
 [markdown]: http://daringfireball.net/projects/markdown
-[git-book]: http://git-scm.com/book/en/Getting-Started-Git-Basics
+[git-book-basics]: http://git-scm.com/book/en/Getting-Started-Git-Basics
 [rwg-img]: https://raw.github.com/funkaster/realworldgit/master/images/realworldgit.png
 [fork-img]: https://raw.github.com/funkaster/realworldgit/master/images/fork.png
 [gh-clone-img]: https://raw.github.com/funkaster/realworldgit/master/images/clone.png
 [gh-commit-img]: https://raw.github.com/funkaster/realworldgit/master/images/commit.png
 [pr-img]: https://raw.github.com/funkaster/realworldgit/master/images/pullrequest.png
 [pr-merged-img]: https://raw.github.com/funkaster/realworldgit/master/images/pr-merged.png
+[git-checkout]: http://www.kernel.org/pub/software/scm/git/docs/git-checkout.html
+[git-rebase]: http://www.kernel.org/pub/software/scm/git/docs/git-rebase.html
+[linus-rebase]: http://www.mail-archive.com/dri-devel@lists.sourceforge.net/msg39091.html
