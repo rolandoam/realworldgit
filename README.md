@@ -465,7 +465,8 @@ If you change branches, using `git checkout <branch_name>` will switch the
 `HEAD` pointer, and will also reflect any changes in the _working directory_.
 
 Now, continuing with the assumptions, let's assume you are in the awesome branch
-and you make a new commit, adding this feature. Your repo would look like this.
+and you make a new commit, adding the new feature. Your repo would look like
+this.
 
 ```
 [ master ]
@@ -483,7 +484,7 @@ the last commit.  The `master` pointer, however is still on the old state.
 To continue our story, you now got a patch from a contributor and need to apply
 it, but you don't want to do that in the `awesome` branch, because it has
 nothing to do with that feature and one thing you do know is that you want to
-keep things simple. So in order to apply the patch, you need to switch to the
+keep things clean. So in order to apply the patch, you need to switch to the
 master branch and apply it there.
 
 ```sh
@@ -514,7 +515,7 @@ workflow usually is: work on `master` and if you need to fix a bug, create a
 branch, work there and then merge the branch back to master. Same with small
 features.
 
-If more than one developer is working on the same feature, they may want to work
+If more than one developer are working on the same feature, they may want to work
 on the same branch. You can do that by _publishing_ your branch on a remote repo
 and then letting the other developers about that branch. We will cover that
 later in the tutorial.
@@ -588,8 +589,8 @@ $ git fetch upstream
 $ git merge upstream/master
 ```
 
-Now, can we merge? Not yet. At this point, I would like to open a small
-discussion around a very powerfull feature of git, the
+Now, can we merge our awesome branch? Not yet. At this point, I would like to
+open a small discussion around a very powerfull feature of git, the
 [rebase][git-rebase]. Rebase is a very, very powerfull command in git, but also
 very complex (you know what they say, "with great power, comes great
 responsibility"). Basically what rebase allows you to do is to modify (rewrite)
@@ -628,13 +629,8 @@ for your repo.
 ```
 
 Let's assume now, that with the state in the diagram, you want to bring your
-changes from the awesome branch to master. So you move yourself to master and do
-as told.
-
-```sh
-$ git checkout master
-$ git rebase awesome
-```
+changes from the awesome branch to master. Once in the master branch, you would
+run the `git rebase awesome` command (do not run it yet!).
 
 What rebase does, is to _rewind_ your changes all the way until a common
 ancestor in the tree, apply whatever changes you have in awesome and then it
@@ -664,10 +660,10 @@ Now, let's try to apply that to our repo.
 $ git checkout awesome
 $ git log --oneline -2 # shows only the last two commits
 0dff283 adding my branch-test file
-c0ac58b adds branch_test directory
+c0ac58b adds branch_test directory # this will be the common ancester
 $ git checkout master
 $ git log --oneline -2
-c0ac58b adds branch_test directory
+c0ac58b adds branch_test directory # see? right here
 1c96575 minor edit in text
 $ git rebase awesome
 ...
@@ -678,8 +674,8 @@ c0ac58b adds branch_test directory
 
 So what happens here, is that it since our case was a bit simpler, we didn't
 actually have to rewind, because we were already sitting in the point where the
-two branches had split, but we can see however, that master now shares the same
-history than the awesome branch. At this point, we can run some more tests,
+two branches had split. What we can see however, is that master now shares the
+same history than the awesome branch. At this point, we can run some more tests,
 build another binary for QA and if all goes well, delete the awesome branch.
 
 ```sh
@@ -687,7 +683,8 @@ $ git branch -d awesome
 ```
 
 The command `branch -d` will remove a branch, only if it was merged. This can be
-considered a "safe" delete, since no change will be lost.
+considered a "safe" delete, since no change will be lost. If you really want to
+delete an unmerged branch, use the `-D` flag.
 
 Now you might want to send another pull request to publish your changes, or
 another patch.
