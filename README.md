@@ -5,7 +5,13 @@ a real github repository and the whole workflow.
 
 ## NOTE
 
-This is a WIP! - NOT YET COMPLETE
+This is a WIP! - NOT YET COMPLETE.
+
+There might be errors in the tutorial, and some issues with the text. If you
+find any, please send a pull request or a patch to fix them. Thanks!
+
+I have some ideas on how to improve this tutorial and make it even more real
+world, you can read those ideas in the [TODO.md][rwg-todo].
 
 ## Disclaimer
 
@@ -704,3 +710,4 @@ another patch.
 [git-checkout]: http://www.kernel.org/pub/software/scm/git/docs/git-checkout.html
 [git-rebase]: http://www.kernel.org/pub/software/scm/git/docs/git-rebase.html
 [linus-rebase]: http://www.mail-archive.com/dri-devel@lists.sourceforge.net/msg39091.html
+[rwg-todo]: https://github.com/funkaster/realworldgit/blob/master/TODO.md
