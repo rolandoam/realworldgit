@@ -107,6 +107,7 @@ some place safe (like ~/projects, or whatever...) and clone the repo:
 ```sh
 git clone git@github.com:yourusername/realworldgit.git
 ```
+If you got this error: Permission denied (publickey), look this [Generating SSH Keys][Generating SSH Keys].
 
 For the github client, just open the client, refresh the list of projects under
 the github section and click the clone button (it appears only when you hover
@@ -711,3 +712,4 @@ another patch.
 [git-rebase]: http://www.kernel.org/pub/software/scm/git/docs/git-rebase.html
 [linus-rebase]: http://www.mail-archive.com/dri-devel@lists.sourceforge.net/msg39091.html
 [rwg-todo]: https://github.com/funkaster/realworldgit/blob/master/TODO.md
+[Generating SSH Keys]: https://help.github.com/articles/generating-ssh-keys
